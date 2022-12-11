@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::{self, BufRead};
 
 pub fn answer() {
-    
     let file = File::open("resources/day01-input.txt").unwrap();
     let lines = io::BufReader::new(file).lines();
 
@@ -28,8 +27,11 @@ pub fn answer() {
     }
 
     match elfs_pack.iter().max() {
-        Some(max_cal) => { println!("Most is {}", max_cal) }
-        _ => { println!("Bugger... no one has nothing?") }
+        Some(max_cal) => {
+            println!("Most is {}", max_cal)
+        }
+        _ => {
+            println!("Bugger... no one has nothing?")
+        }
     }
 }
-

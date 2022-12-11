@@ -5,11 +5,10 @@ use std::io::{self, BufRead};
 enum Jokenpo {
     Rock,
     Paper,
-    Scissors
+    Scissors,
 }
 
 impl Jokenpo {
-
     pub fn from(c: char) -> Result<Jokenpo, ()> {
         match c {
             'A' | 'X' => Ok(Jokenpo::Rock),
@@ -29,7 +28,7 @@ impl Jokenpo {
                     Jokenpo::Paper => Jokenpo::Rock,
                     Jokenpo::Scissors => Jokenpo::Paper,
                 }
-            },
+            }
             'Z' => {
                 // Win
                 match self {
@@ -37,26 +36,27 @@ impl Jokenpo {
                     Jokenpo::Paper => Jokenpo::Scissors,
                     Jokenpo::Scissors => Jokenpo::Rock,
                 }
-            },
+            }
             _ => self.clone(),
-        }
+        };
     }
 
     pub fn value(&self) -> i32 {
         match self {
-            Jokenpo::Rock => return 1,
-            Jokenpo::Paper => return 2,
-            Jokenpo::Scissors => return 3,
-        };
+            Jokenpo::Rock => 1,
+            Jokenpo::Paper => 2,
+            Jokenpo::Scissors => 3,
+        }
     }
 
     pub fn points(me: Jokenpo, them: Jokenpo) -> i32 {
         let mut points = me.value();
         if me == them {
             points += 3;
-        } else if (me == Jokenpo::Rock && them == Jokenpo::Scissors) || 
-                (me == Jokenpo::Paper && them == Jokenpo::Rock) ||
-                    (me == Jokenpo::Scissors && them == Jokenpo::Paper) {
+        } else if (me == Jokenpo::Rock && them == Jokenpo::Scissors)
+            || (me == Jokenpo::Paper && them == Jokenpo::Rock)
+            || (me == Jokenpo::Scissors && them == Jokenpo::Paper)
+        {
             points += 6;
         }
         points
@@ -64,7 +64,6 @@ impl Jokenpo {
 }
 
 pub fn answer() {
-    
     let file = File::open("resources/day02-input.txt").unwrap();
     let lines = io::BufReader::new(file).lines();
     let mut match_points = 0;
@@ -85,4 +84,3 @@ pub fn answer() {
 
     println!("{}", match_points);
 }
-

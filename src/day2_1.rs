@@ -5,11 +5,10 @@ use std::io::{self, BufRead};
 enum Jokenpo {
     Rock,
     Paper,
-    Scissors
+    Scissors,
 }
 
 impl Jokenpo {
-
     pub fn from(c: char) -> Result<Jokenpo, ()> {
         match c {
             'A' | 'X' => Ok(Jokenpo::Rock),
@@ -28,9 +27,10 @@ impl Jokenpo {
 
         if me == them {
             points += 3;
-        } else if (me == Jokenpo::Rock && them == Jokenpo::Scissors) || 
-                (me == Jokenpo::Paper && them == Jokenpo::Rock) ||
-                    (me == Jokenpo::Scissors && them == Jokenpo::Paper) {
+        } else if (me == Jokenpo::Rock && them == Jokenpo::Scissors)
+            || (me == Jokenpo::Paper && them == Jokenpo::Rock)
+            || (me == Jokenpo::Scissors && them == Jokenpo::Paper)
+        {
             points += 6;
         }
         points
@@ -38,7 +38,6 @@ impl Jokenpo {
 }
 
 pub fn answer() {
-    
     let file = File::open("resources/day02-input.txt").unwrap();
     //let file = File::open("resources/sample.txt").unwrap();
     let lines = io::BufReader::new(file).lines();
@@ -59,4 +58,3 @@ pub fn answer() {
 
     println!("{}", match_points);
 }
-

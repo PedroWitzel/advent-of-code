@@ -2,7 +2,6 @@ use std::fs::File;
 use std::io::{self, BufRead};
 
 pub fn answer() {
-    
     let file = File::open("resources/day01-input.txt").unwrap();
     let lines = io::BufReader::new(file).lines();
 
