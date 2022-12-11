@@ -4,14 +4,31 @@ use std::io::{self, BufRead};
 pub fn answer() {
     
     let file = File::open("resources/sample.txt").unwrap();
-    
     let lines = io::BufReader::new(file).lines();
+
+    let mut elfs_pack = Vec::new();
+    let mut elf_calories = 0;
 
     for line in lines {
         if let Ok(calories) = line {
-            println!("{}", calories);
+            match calories.parse::<i32>() {
+                Ok(calories) => {
+                    elf_calories += calories;
+                    println!("{}", elf_calories)
+                }
+                Err(_) => {
+                    elfs_pack.push(elf_calories);
+                    elf_calories = 0
+                }
+            }
         }
     }
+
+    if elf_calories > 0 {
+        elfs_pack.push(elf_calories);
+    }
+
+    println!("{:?}", elfs_pack);
 
 }
 
