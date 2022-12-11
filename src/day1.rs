@@ -3,7 +3,7 @@ use std::io::{self, BufRead};
 
 pub fn answer() {
     
-    let file = File::open("resources/sample.txt").unwrap();
+    let file = File::open("resources/day01-input.txt").unwrap();
     let lines = io::BufReader::new(file).lines();
 
     let mut elfs_pack = Vec::new();
