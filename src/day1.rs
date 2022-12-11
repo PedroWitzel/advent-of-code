@@ -14,7 +14,6 @@ pub fn answer() {
             match calories.parse::<i32>() {
                 Ok(calories) => {
                     elf_calories += calories;
-                    println!("{}", elf_calories)
                 }
                 Err(_) => {
                     elfs_pack.push(elf_calories);
@@ -28,8 +27,9 @@ pub fn answer() {
         elfs_pack.push(elf_calories);
     }
 
-    println!("{:?}", elfs_pack);
-
+    match elfs_pack.iter().max() {
+        Some(max_cal) => { println!("Most is {}", max_cal) }
+        _ => { println!("Bugger... no one has nothing?") }
+    }
 }
-
 
