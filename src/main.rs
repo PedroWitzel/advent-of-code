@@ -1,5 +1,5 @@
-mod day7_1;
+mod day1;
 
 fn main() {
-    day7_1::answer()
+    println!("{}", day1::part1())
 }

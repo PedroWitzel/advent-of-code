@@ -1,37 +1,23 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 
-pub fn answer() {
+
+pub fn part1() -> String {
     let file = File::open("resources/day01-input.txt").unwrap();
     let lines = io::BufReader::new(file).lines();
 
-    let mut elfs_pack = Vec::new();
-    let mut elf_calories = 0;
-
+    let mut coordinates = 0;
     for line in lines {
-        if let Ok(calories) = line {
-            match calories.parse::<i32>() {
-                Ok(calories) => {
-                    elf_calories += calories;
-                }
-                Err(_) => {
-                    elfs_pack.push(elf_calories);
-                    elf_calories = 0
-                }
+        if let Ok(calibration) = line {
+            let mut numbers = calibration.chars().filter(|c| c.is_numeric());
+            let first = numbers.next().unwrap().to_digit(10).unwrap();
+            if let Some(last) = numbers.next_back() {
+                coordinates += last.to_digit(10).unwrap() + first * 10;
+            } else {
+                coordinates += first * 11
             }
         }
     }
 
-    if elf_calories > 0 {
-        elfs_pack.push(elf_calories);
-    }
-
-    match elfs_pack.iter().max() {
-        Some(max_cal) => {
-            println!("Most is {}", max_cal)
-        }
-        _ => {
-            println!("Bugger... no one has nothing?")
-        }
-    }
+    coordinates.to_string()
 }
