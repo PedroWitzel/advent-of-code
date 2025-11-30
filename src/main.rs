@@ -1,5 +1,6 @@
-mod day1;
+mod day01;
+mod helpers;
 
 fn main() {
-    println!("{}", day1::part1())
+    day01::run();
 }
