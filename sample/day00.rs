@@ -3,8 +3,8 @@ use std::io::{BufRead, BufReader};
 use crate::helpers;
 
 pub fn run() {
-    part1();
-    part2();
+    println!("{}", part1());
+    println!("{}", part2());
 }
 
 fn part1() -> String {
