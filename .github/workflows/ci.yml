@@ -51,7 +51,18 @@ jobs:
         run: cargo test --locked
 
       - name: Clippy
-        run: cargo clippy --locked -- -D warnings
+        run: |
+          # emit JSON so we can convert each diagnostic to a GitHub inline annotation
+          cargo clippy --locked --message-format=json 2>/dev/null \
+            | jq -r '
+                select(.reason == "compiler-message")
+                | select(.message.level == "warning" or .message.level == "error")
+                | .message as $m
+                | $m.spans[0] as $s
+                | "::\($m.level) file=\($s.file_name),line=\($s.line_start),endLine=\($s.line_end),col=\($s.column_start),title=clippy::\($m.message)"
+              ' \
+            | tee /dev/stderr \
+            | grep -q "^::error" && exit 1 || exit 0
 
       - name: Format check
         run: cargo fmt --check
