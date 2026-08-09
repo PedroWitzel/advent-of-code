@@ -24,4 +24,9 @@ jobs:
           echo "CARGO_TERM_COLOR=always" >> $GITHUB_ENV
 
       - name: Print toolchain version
-        run: rustc --version --verbose
+        run: |
+          rustc --version --verbose
+          echo "### Rust toolchain" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          rustc --version --verbose >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
