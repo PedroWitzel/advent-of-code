@@ -6,53 +6,19 @@ on:
   pull_request:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install Rust stable with clippy and rustfmt
-        run: |
-          # ubuntu-latest ships rustup; install the stable toolchain explicitly
-          rustup toolchain install stable \
-            --profile minimal \
-            --component clippy,rustfmt \
-            --no-self-update
-          rustup default stable
-          # disable incremental compilation (speeds up CI, irrelevant for caching)
-          echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
-          echo "CARGO_TERM_COLOR=always" >> $GITHUB_ENV
-
-      - name: Print toolchain version
-        run: |
-          rustc --version --verbose
-          echo "### Rust toolchain" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          rustc --version --verbose >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-
-      - name: Cache Cargo registry and build artifacts
-        uses: actions/cache@v6
+      - name: Setup Rust
+        uses: ./.github/actions/rust-setup
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          # cache is busted when Cargo.lock changes; os prefix avoids cross-runner collisions
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          # fall back to any cache from the same OS if lock changed
-          restore-keys: |
-            ${{ runner.os }}-cargo-
-
-      - name: Build
-        run: cargo build --locked
-
-      - name: Test
-        run: cargo test --locked
+          components: clippy,rustfmt
 
       - name: Clippy
         run: |
-          # emit JSON so we can convert each diagnostic to a GitHub inline annotation
+          # convert clippy diagnostics to GitHub inline PR annotations
           cargo clippy --locked --message-format=json 2>/dev/null \
             | jq -r '
                 select(.reason == "compiler-message")
@@ -66,3 +32,24 @@ jobs:
 
       - name: Format check
         run: cargo fmt --check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Rust
+        uses: ./.github/actions/rust-setup
+
+      - name: Build
+        run: cargo build --locked
+
+      - name: Test
+        run: cargo test --locked
+
+  # aggregator job — set branch protection on this one name only
+  ci:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - run: echo "All checks passed"
