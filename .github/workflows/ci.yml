@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install Rust stable with clippy and rustfmt
+        run: |
+          # ubuntu-latest ships rustup; install the stable toolchain explicitly
+          rustup toolchain install stable \
+            --profile minimal \
+            --component clippy,rustfmt \
+            --no-self-update
+          rustup default stable
+          # disable incremental compilation (speeds up CI, irrelevant for caching)
+          echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
+          echo "CARGO_TERM_COLOR=always" >> $GITHUB_ENV
+
+      - name: Print toolchain version
+        run: rustc --version --verbose
