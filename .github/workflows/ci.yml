@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -30,3 +30,28 @@ jobs:
           echo '```' >> $GITHUB_STEP_SUMMARY
           rustc --version --verbose >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Cache Cargo registry and build artifacts
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          # cache is busted when Cargo.lock changes; os prefix avoids cross-runner collisions
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          # fall back to any cache from the same OS if lock changed
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build
+        run: cargo build --locked
+
+      - name: Test
+        run: cargo test --locked
+
+      - name: Clippy
+        run: cargo clippy --locked -- -D warnings
+
+      - name: Format check
+        run: cargo fmt --check
